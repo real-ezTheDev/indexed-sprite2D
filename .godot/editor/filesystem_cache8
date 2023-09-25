@@ -1,0 +1,16 @@
+ea4bc82a6ad023ab7ee23ee620429895
+::res://::1695322139
+8by8-export.png::CompressedTexture2D::2665112863498582528::1695189605::1695189611::1::::<><>::
+8by8.png::CompressedTexture2D::7029890505766627762::1695189602::1695189611::1::::<><>::
+bit_reader.gd::GDScript::-1::1695176979::0::1::::BitReader<>Node<>::
+character-sprite-01-export-export_e.png::CompressedTexture2D::5800297346308670904::1695253422::1695253424::1::::<><>::
+character-sprite-01-export.png::CompressedTexture2D::7904969144938713731::1694759855::1694759862::1::::<><>::
+good_normal_one-black-pixel_paletted.png::CompressedTexture2D::6383645823818564280::1695081672::1695081689::1::::<><>::
+icon.svg::CompressedTexture2D::6226763487736609683::1693170837::1693170846::1::::<><>::
+indexed.png::CompressedTexture2D::7542547826060645318::1693170992::1693171003::1::::<><>::
+node_2d.tscn::PackedScene::1326444668348328209::1695257253::0::1::::<><>::uid://dkvhxmbnohcwx::::res://character-sprite-01-export.png<>res://Sprite2D.gd
+palette_swap.gdshader::Shader::-1::1695257258::0::1::::<><>::
+png_reader.gd::GDScript::-1::1695256574::0::1::::PNGReader<>Node<>::
+Sprite2D.gd::GDScript::-1::1695256540::0::1::::<>Sprite2D<>::
+Sprite-0001.png::CompressedTexture2D::3178075333059459393::1695100569::1695100572::1::::<><>::
+test_pixel.png::CompressedTexture2D::8674986937717547304::1695070053::1695070057::1::::<><>::

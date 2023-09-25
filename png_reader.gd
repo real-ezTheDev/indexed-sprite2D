@@ -43,7 +43,7 @@ const LENGTH_TABLE = {
 	282: [163, 5],
 	283: [195, 5],
 	284: [227, 5],
-	285: [285, 0]
+	285: [258, 0]
 }
 
 # distance table maps backreference distance code to [distance, extra bits]
@@ -234,16 +234,63 @@ func _decompress_zlib(compressed_data: PackedByteArray):
 			pass
 		
 		var cleaned_image_data: Array[int] = []
-		print(uncompressed_image_data)
-		for h in height:
-			for w in width + 1:
-				if w != 0:
-					print(w + (h * (width + 1)))
-					cleaned_image_data.push_back(uncompressed_image_data[w + (h * (width + 1))])
-					
+
+		var current_filter_index = 0
+		while current_filter_index < (width + 1) * height:
+			var line = []
+			var line_filter = uncompressed_image_data[current_filter_index]
+			current_filter_index += 1
+			#print("line: " + str(current_filter_index/(width+1)) + "filter:" + str(line_filter))
+			if line_filter == 0:
+				for n in width:
+					line.push_back(uncompressed_image_data[current_filter_index + n])
+					cleaned_image_data.push_back(uncompressed_image_data[current_filter_index + n])
+			elif line_filter == 1:
+				for n in width:
+					var left_pixel = uncompressed_image_data[current_filter_index + n - 1] if n > 0 else 0
+					line.push_back(uncompressed_image_data[current_filter_index + n] + left_pixel)
+					cleaned_image_data.push_back(uncompressed_image_data[current_filter_index + n] + left_pixel)
+			elif line_filter == 2:
+				for n in width:
+					var left_pixel = uncompressed_image_data[current_filter_index + n - 1] if n > 0 else 0
+					line.push_back(uncompressed_image_data[current_filter_index + n] + left_pixel)
+					cleaned_image_data.push_back(uncompressed_image_data[current_filter_index + n] + left_pixel)
+			elif line_filter == 3:
+				for n in width:
+					var up_pixel = uncompressed_image_data[current_filter_index + n - (width + 1)] if n > 0 else 0
+					line.push_back(uncompressed_image_data[current_filter_index + n] + up_pixel)
+					cleaned_image_data.push_back(uncompressed_image_data[current_filter_index + n] + up_pixel)
+			elif line_filter == 4:
+				for n in width:
+					var left_pixel = uncompressed_image_data[current_filter_index + n - 1] if n > 0 else 0
+					var up_pixel = uncompressed_image_data[current_filter_index + n - (width + 1)] if n > 0 else 0
+					var left_up_pixel = uncompressed_image_data[current_filter_index + n - (width + 1) - 1] if n > 0 else 0
+					var p_preditor = _paeth_predictor(left_pixel, up_pixel, left_up_pixel)
+					line.push_back(uncompressed_image_data[current_filter_index + n] + p_preditor)
+					cleaned_image_data.push_back(uncompressed_image_data[current_filter_index + n] + p_preditor)
+			else:
+				for n in width:
+					line.push_back(uncompressed_image_data[current_filter_index + n])
+					cleaned_image_data.push_back(uncompressed_image_data[current_filter_index + n])
+			#print(line)
+			current_filter_index += width
+
 		uncompressed_image_data = cleaned_image_data
+
 		if bfinal == 1:
 			break
+
+func _paeth_predictor(left: int , up: int, leftup: int):
+	var p = left + up - leftup
+	var  pa = abs(p - left)
+	var pb = abs(p - up)
+	var pc = abs(p - leftup)
+	if pa <= pb && pa <= pc:
+		return left
+	elif pb <= pc:
+		return up
+	else:
+		return leftup
 
 # Inflate (uncompress Deflate) given the literal/length huffman table, distance code table, and bit_stream.
 # Resulting data is written at the tail of provided "out" array as a byte per element in-order.
@@ -255,6 +302,7 @@ func _inflate(ll_table: Dictionary, d_table: Dictionary, bit_stream: BitReader, 
 			if ll_table.has(code) && ll_table[code]["length"] == n + 1:
 				break
 		var symbol = ll_table[code]["symbol"]
+
 		if symbol == 256:
 			break
 		elif symbol < 256:

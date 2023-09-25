@@ -1,0 +1,35 @@
+[gd_scene load_steps=6 format=3 uid="uid://s5sl5qe484yv"]
+
+[ext_resource type="Texture2D" uid="uid://covybxvxiutqm" path="res://character-sprite-01-export-export_e.png" id="1_fqag8"]
+[ext_resource type="Script" path="res://Sprite2D.gd" id="3_nbvn5"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_aao0w"]
+
+[sub_resource type="Shader" id="Shader_6tlsp"]
+code = "shader_type canvas_item;
+
+uniform vec4 color : source_color;
+uniform sampler2D index_as_r;
+
+void fragment() {
+	// Place fragment code here.
+	vec2 uv = UV;
+	float palette_index = texture(index_as_r, vec2(uv)).r * 10.;
+	COLOR.rgb = vec3(palette_index, palette_index, palette_index);
+	
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_v072q"]
+shader = SubResource("Shader_6tlsp")
+shader_parameter/color = null
+
+[node name="Node2D" type="Node2D"]
+texture_filter = 1
+material = SubResource("ShaderMaterial_aao0w")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_v072q")
+texture = ExtResource("1_fqag8")
+centered = false
+script = ExtResource("3_nbvn5")
